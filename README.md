@@ -1,2 +1,2 @@
 # Fudan-Univ
-Courseworks @Fudan University
+Part of courseworks @Fudan University
