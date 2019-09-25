@@ -1,0 +1,308 @@
+\documentclass{ctexart}
+
+\usepackage{amsmath}
+
+\usepackage{amsthm}
+
+\usepackage{amssymb}
+
+\usepackage{mathabx}
+
+\usepackage{bm}
+
+\usepackage{graphicx}
+
+\usepackage{listings}
+\lstset{
+basicstyle=\scriptsize
+}
+
+\usepackage{caption}
+
+\begin{titlepage}
+
+\title{统计中的计算方法 \\ 第三次作业}
+
+\author{于慧倩 \\ 14300180118}
+
+\date{2017年5月}
+
+\end{titlepage}
+
+\begin{document}
+
+\maketitle
+
+\newpage
+
+
+
+%第一题
+\section{第一题}
+
+用两种方法产生以下分布，并进行数值试验:
+\[ P{X=i} = \frac{e^{-\lambda}\lambda^i/i!}{\sum_{j=0}^{k} e^{-\lambda} \lambda^j/j!},  i=0,\dots,k \]
+
+\subsection{method 1: the inverse transform method}
+ \subsubsection{计算方法}
+生成在\([0,1]\)均匀分布的随机数\(U\)，继而生成：
+
+\[
+X = \left\{ \begin{array}{rl}
+  x_0 &\mbox{ if \(U<p_0\)} \\
+  x_1 &\mbox{ if \(p_0 \leq U < p_0+p_1\)} \\
+  \dots &\dots \\
+  x_k  &\mbox{ if \(\sum_{i=0}^{k-1}p_i \leq U < \sum_{i=0}^k p_i\)}
+       \end{array} \right.
+\]
+
+通过下述方法生成\(X\)
+
+\begin{itemize} 
+\item 生成随机数\(U\)
+\item 如果\(U < p_0\)，令\(X=x_0\)，停止。
+\item 否则，如果\(U < p_0+p_1\)，令\(X=x_1\)，停止。
+\item \dots
+\item 否则，如果\(U < \sum_{i=0}^{k-1}\)，令\(X=x_{k-1}\)，停止。
+\item 否则，令\(X=x_k\)，停止。
+\end{itemize}
+
+由于\(p_i=P\{x=i\}=e^{-\lambda} \frac{\lambda^i}{i!}/ \sum_{j=0}^k e^{-\lambda} \frac{\lambda^j}{j!}\)，我们有\(p_{i+1}=p_i \frac{\lambda}{i+1}, i\geq 0\)，所以实际上操作如下
+
+\begin{itemize} 
+\item Step 1:计算\(C=\sum_{j=0}^k e^{-\lambda} \frac{\lambda^j}{j!}\)
+\item Step 2: 生成随机数\(U\)
+\item Step 3: \(i=0,p=e^{-\lambda}/C,F=p\)
+\item Step 4: 如果 \(U \leq F\)，令\(X=i\)，停止
+\item Step 5: \(i=i+1;p=\lambda p/i;F=F+p\);
+\item Step 6:重新回到Step 4继续判断
+\end{itemize}
+
+
+\subsubsection{数值试验}
+
+取\(k=10,\lambda = 5\)为例进行数值试验，得到结果如下图所示。重复操作20000次得到长度为20000的分布如题干所示的随机数\(X\)，且均值、方差分别为\(4.8859,4.435303\)
+
+\centerline{\includegraphics[width=5.5in]{H3_1.eps}}
+
+
+
+\subsection{method 2:the acceptance-rejection method}
+ \subsubsection{计算方法}
+取Y为平均分布，即其概率密度函数\(\{q_j=\frac{1}{k}\},j \geq 0\)，令\(c = max(\frac{p_j}{q_j})\)，计算可得\(c = \frac{k}{C}[\lambda-1]\)。
+
+通过下述方法生成\(X\)
+\begin{itemize} 
+\item Step 1:生成随机数\(U_1\)，令\(Y=[kU_1]\)
+\item Step 2:生成随机数\(U_2\)
+\item Step 3:如果\(U_2 \leq \frac{p_Y*k}{c}\)，令\(X=Y\)，停止。否则回到Step 1.
+\end{itemize}
+
+
+\subsubsection{数值试验}
+
+仍然取\(k=10,\lambda = 5\)为例进行数值试验，得到结果如下图所示。重复操作10万次得到长度为24462的分布如题干所示的随机数\(X\)，且均值、方差分别为\(4.816205,4.03032\)。并且\(\frac{1}{c}=0.02465762\)，实际有效操作比例为\(0.024462\)
+
+\centerline{\includegraphics[width=5.5in]{H3_2.eps}}
+
+
+
+\section{第二题}
+
+给出模拟下述分布的方法，并进行数值试验：
+\[
+p_j = \left\{ \begin{array}{rl}
+  0.11 &\mbox{ j is odd , and \(5 \leq j \leq 13\)} \\
+  0.09 &\mbox{ j is even, and \(6 \leq j \leq 14\)} \\
+     \end{array} \right.
+\]
+\subsection{method 1:the inverse transform method}
+ \subsubsection{计算方法}
+通过下述方法生成\(X\)
+
+\begin{itemize} 
+\item Step 1:生成随机数\(U\)
+\item Step 2: \(p=0.11\),令\(x=x_0=5\),如果\(U < p\)，令\(X=x\)，停止。
+
+\item Step 3:否则，\(p = p+0.09\),\(x=x+1\),如果\(U < p\)，令\(X=x\)，停止。
+\item Step 4:否则，\(p = p+0.11\),\(x=x+1\),如果\(U < p \)，令\(X=x\)，停止。
+\item Step 5:否则，回到Step 3。
+\end{itemize}
+
+
+\subsubsection{数值试验}
+
+进行数值试验，得到结果如下图所示。重复操作2万次得到长度为2万的分布如题干所示的随机数\(X\)，且均值、方差分别为\(9.45085，8.242596\)。
+
+\centerline{\includegraphics[width=5.5in]{H3_2_1.eps}}
+
+
+\subsection{method 2:the acceptance-rejection method}
+ \subsubsection{计算方法}
+取Y为平均分布，即其概率密度函数\(\{q_j=\frac{1}{10}\},j \geq 0\)，令\(c = max(\frac{p_j}{q_j})=1.1\)。
+
+通过下述方法生成\(X\)
+\begin{itemize} 
+\item Step 1:生成随机数\(U_1\)，令\(Y=[10U_1]+5\)
+\item Step 2:生成随机数\(U_2\)
+\item Step 3:如果\(U_2 \leq \frac{p_Y}{0.11}\)，令\(X=Y\)，停止。否则回到Step 1.
+\end{itemize}
+
+\subsubsection{数值试验}
+
+进行数值试验，得到结果如下图所示。重复操作10万次得到长度为91020的分布如题干所示的随机数\(X\)，且均值、方差分别为\(9.451362，8.221225\)。并且\(\frac{1}{c}=0.9090909\)，实际有效操作比例为\(0.9102\)
+
+\centerline{\includegraphics[width=5.5in]{H3_2_2.eps}}
+
+
+
+
+\section{第三题}  
+
+给出具有如下概率密度函数的随机变量的产生方法，并进行数值验证：
+ \[
+f(x)= \left\{ \begin{array}{rl}
+  e^{2x} & -\infty < x< 0\\
+  e^{-2x} & 0<x<\infty \\
+     \end{array} \right.
+\]
+
+\subsection{the inverse transform algorithm}
+ \subsubsection{计算方法}
+因为\(U\)为\((0,1)\)上均匀分布，当\(x<0\)时，有\(\int_{-\infty}^x e^{2t} \mbox{d} t =U\),得到\(x=\frac{1}{2} \ln (2U)\)。当\(x
+\geq 0\)时，有\(\int_{-\infty}^0 e^{2t} \mbox{d} t +\int_0^x e^{2t} \mbox{d}t=U\),得到\(x=-\frac{1}{2} \ln (2(1-U))\)
+
+
+，按照下述方法生成\(X\):
+
+\begin{itemize} 
+\item Step 1:生成\((0,1)\)上均匀分布随机数\(U_1\) 
+\item Step 3:生成\((0,1)\)上均匀分布随机数\(U_2\) 
+\item Step 4: if \(U_2 \leq \frac{1}{2}\)，令\(X=\frac{1}{2} \ln (2U_1)\)，否则\(X=-\frac{1}{2} \ln (2(1-U_1))\)
+\end{itemize}
+
+\subsubsection{数值试验}
+
+进行数值试验，得到结果如下图所示。
+
+a)重复操作10万次
+
+得到长度为10万的分布如题干所示的随机数\(X\)，且均值、方差分别为\(0.001559111,0.2755747\)。
+
+\centerline{\includegraphics[width=5.5in]{H3_3.eps}}
+
+b)重复操作1万次
+
+得到长度为1万的分布如题干所示的随机数\(X\)，且均值、方差分别为\(-0.005648216,0.2654377\)。
+
+\centerline{\includegraphics[width=5.5in]{H3_3_2.eps}}
+
+c)重复操作1千次
+
+得到长度为1千的分布如题干所示的随机数\(X\)，且均值、方差分别为\(0.006721561,0.2410665\)。
+
+\centerline{\includegraphics[width=5.5in]{H3_3_3.eps}}
+
+
+
+
+
+\section{第四题}  
+
+给出具有如下概率密度函数的随机变量的产生方法,进行数值试验， 并讨论方法的运算效率:\(f(x) =30(x^2−2x^3+x^4),0 \leq x\leq1\).
+
+\subsection{method 1: the acceptance-rejection method}
+
+
+\subsubsection{计算方法}
+
+令\(Y\)为均匀分布，其概率密度函数\(g(x)=1,  0<x<1\)，这样有\(c= max (\frac{f(x)}{g(x)})=\frac{15}{8}\)。
+
+利用接受拒绝方法生成\(X\):
+\begin{itemize} 
+\item Step 1:生成\((0,1)\)上的均匀分布随机数\(U_1\)，令\(Y=U_1\)
+\item Step 2:生成\((0,1)\)上的均匀分布随机数\(U_2\)
+\item Step 3: 如果\(U_2 \leq 16 Y^2(Y-1)^2\)，令\(X=Y\)，否则返回Step 1.
+\end{itemize}
+
+\subsubsection{数值试验}
+
+得到结果如下图所示,重复操作10万次,得到长度为53298的分布如题干所示的随机数\(X\)，且均值、方差分别为\(0.4998224,0.03593751\)。并且\(\frac{1}{c}=0.53333\)，实际运算效率为\(0.53298\)
+
+\centerline{\includegraphics[width=5.5in]{H3_4.eps}}
+
+
+\subsection{method 2: the inverse transform method}
+
+\subsubsection{计算方法}
+
+令\(Y\)为均匀分布，其概率密度函数\(g(x)=-6x(x-1),  0<x<1\)，这样有\(c= max (\frac{f(x)}{g(x)})=\frac{5}{4}\)。
+
+利用接受拒绝方法生成\(X\):
+\begin{itemize} 
+\item Step 1:生成\((0,1)\)上的均匀分布随机数\(U_1\)
+\item Step 2:求解\(2Y^3+3Y^2=U_1\),生成\(Y \);
+\item Step 3:生成\((0,1)\)上的均匀分布随机数\(U_2\)
+\item Step 4:如果\(U_2 \leq -4Y(Y-1)\),令\(X=Y\)，否则返回Step1.
+
+\end{itemize}
+
+\subsubsection{数值试验}
+
+得到结果如下图所示,重复操作1万次,得到长度为8007的分布如题干所示的随机数\(X\)，且均值、方差分别为\(0.4979851,0.03592379\)。并且\(\frac{1}{c}=0.8\)，实际运算效率为\(0.8007\)
+
+\centerline{\includegraphics[width=5.5in]{H3_4_2.eps}}
+
+
+\section{第五题}  
+
+给出产生具有如下概率密度函数的随机变量的接受拒绝方法，\(f(x)=\frac{1}{2}x^2e^{-x},0 \leq x <\infty\).假设用指数分布来产生此分布，给出最优的参数\(\lambda\).
+
+
+
+\subsection{计算最优参数}
+令\(Y\)为指数分布，其概率密度函数为\(g(x)=\lambda e^{-\lambda x}\)，令\(c(x,\lambda) = max(\frac{f(x)}{g(x)}=\frac{1}{2\lambda}x^2 e^{-x+\lambda x})\)。
+
+对\(c(x,\lambda)\)关于\(x\)求导：
+\[
+[2x+(\lambda-1)]e^{-x+\lambda x}=0 
+\]
+
+得到
+\[
+x=\frac{2}{1-\lambda}
+\]
+
+带入\(c(x,\lambda)\)得到
+\[c(\lambda)=\frac{1}{\lambda}\frac{2}{(1-\lambda)^2}e^{-2}
+\]
+对\(\lambda\)求导令其为零，得到
+\[
+\lambda=1,\mbox{  or  },\lambda=\frac{1}{3}
+\]
+
+最终有\(\lambda= \frac{1}{3}\)为最优参数，此时\(c=\frac{27}{2}e^{-2}\)
+
+\subsection{计算方法}
+按照the acceptance-rejection method 生成\(X\):
+
+\begin{itemize} 
+\item Step 1:生成指数分布Y，其概率密度函数为\(g(x)=\frac{1}{3} e^{-\frac{1}{3} x}\)。
+\item Step 2:生成\((0,1)\)上的均匀分布随机数，\(U\)
+\item Step 3: 如果\(U \leq \frac{1}{9} Y^2 e^{2-\frac{2}{3}Y}\)，令\(X=Y\)，否则返回Step 1.
+\end{itemize}
+
+其中利用the inverse transform algorithm生成指数分布Y步骤如下：
+\begin{itemize} 
+\item Step 1:生成\((0,1)\)上均匀分布随机数\(U\) 
+\item Step 2:令\(Y = -3 \ln(1-U)\)。
+\end{itemize}
+
+
+\subsection{数值试验}
+
+得到结果如下图所示,重复操作10万次,得到长度为18094的分布如题干所示的随机数\(X\)，且均值、方差分别为\(3.007682,2.975097 \)。并且\(\frac{1}{c}=0.5473375\)，实际有效操作比例为\(0.54957\)
+
+\centerline{\includegraphics[width=5.5in]{H3_5.eps}}
+
+\end{document}

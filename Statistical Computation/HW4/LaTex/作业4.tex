@@ -1,0 +1,293 @@
+\documentclass{ctexart}
+
+\usepackage{amsmath}
+
+\usepackage{amsthm}
+
+\usepackage{amssymb}
+
+\usepackage{mathabx}
+
+\usepackage{bm}
+
+\usepackage{graphicx}
+
+\usepackage{listings}
+\lstset{
+basicstyle=\scriptsize
+}
+
+\usepackage{caption}
+
+\begin{titlepage}
+
+\title{统计中的计算方法 \\ 第四次作业}
+
+\author{于慧倩 \\ 14300180118}
+
+\date{2017年6月}
+
+\end{titlepage}
+
+\begin{document}
+
+\maketitle
+
+\newpage
+
+\section{第一题}
+
+假设随机变量X和Y都在\((0,B)\)上取值。假设\(f(x|y)=C(y) e^{-xy},0<x<B  f(y|x)=C(x)e^{-xy},0<y<B\)，给出一种方法来近似模拟X,Y,并用模拟的方法来
+估计\(E(X),E(XY)\)
+
+\subsection{模拟方法}
+
+首先通过\(\int_0^B f(x|y)=C(y) e^{-xy}=1\)计算出,\(C(y)=\frac{y}{1-e^{-By}}\).
+
+同理：\(C(x)=\frac{x}{1-e^{-Bx}}\).
+
+选择用Gibbs采样进行模拟:
+\begin{itemize} 
+\item Step 1:随机给出初始值,\((x_0,y_0) \in (0,B)\times(0,B)\)
+\item Step 2:重复取样\(x_i  \sim f(x|y_{i-1})\),\(y_i \sim f(y|x_i)\);
+\end{itemize}
+
+其中生成\(x_i  \sim f(x|y_{i-1})\)，采用inverse方法进行：
+\begin{itemize} 
+\item Step 1:生成\((0,1)\)均匀分布的随机数U
+\item Step 2:\(x_i=-\frac{1}{y} \ln (1-\frac{Uy}{C(y)})\);
+\end{itemize}
+
+生成\(y_i\)的步骤同理。
+
+\subsection{模拟估计}
+
+调用MCMC.Gibbsxy.R中的函数，生成\(10^4 \)个随机变量且B时，
+MCMC.Gibbsxy(\(10^4\),1):
+得到\(E(X)\)如下表：
+\begin{table}[h]
+\centering
+\begin{tabular}{| c |c| }          \hline          \bf E(X) &\bf E(XY) \\          \hline  0.4596391 &0.2047234 \\          \hline 0.4610378 & 0.2064006\\          \hline       0.4615507 & 0.2033755\\          \hline
+ 0.4651505 &0.2075964\\
+\hline
+0.468295 & 0.208894\\
+\hline
+\end{tabular}
+\end{table}
+
+\section{第二题}
+
+假设 \(Xi, i = 1, 2, 3\)，相互独立且服从均值为 1 的指数分布。设计一种模拟方法来估计,\(E(X1+2X2+3X3 |X1+2X2+3X3 >15),E(X1+2X2+3X3 |X1+2X2+3X3 <1)\)
+
+分别用Gibbs采样与Metropolis-Hastings 算法生成两种分布：
+
+\subsection{\(E(X1+2X2+3X3|X1+2X2+3X3 >15)\)}
+
+运用Gibbs采样方法：
+\begin{itemize} 
+\item Step 1:选取初值\((X_1,X_2,X_3)\)，使得\(X1+2X2+3X3 >15)\)
+\item Step 2:重复操作，从三个变量中选出两个，\(I,J\),固定另一个不变，对\(I、J\)进行变化；
+\end{itemize}
+
+其中假设固定\(X_3\)不变，意识到有\(x_i\)相互独立且服从均值为1的指数分布且\(X_1+2X_2>15-3X_3\)。
+计算条件概率，
+\[ f(X_1|X_1+2X_2>15-3X_3=a) = C e^{-1\times X_1} \int^{\infty}_{(a-X_1)/2} e^{-1\times X_2} \mbox{d} X_2 =C' e^{-1 \times X_1 +1/2 X_1} \]
+
+生成参数为\(1-1/2\)的指数分布的随机数，令\(X_1\)等于这个数，然后再用inverse方法计算\(X_2\)。
+
+\[f(X_2|X_2>15-3X_3-X_1=b)=e^{b-X}I_{X\geq b}\]
+\[F(X_2|X_2>15-3X_3-X_1=b)=(1-e^{b-X})I_{X\geq b}=U\]
+
+运用inverse方法生成\(X_2\)：
+\begin{itemize} 
+\item Step 1:生成(0,1)上均匀分布的随机数\(U\)
+\item Step 2:令\(X_2=b-\ln (1-U)=b-\ln (U)\)
+\end{itemize}
+
+\subsection{模拟估计}
+
+见\(H4\_2\_1.R\)
+
+选取初值为(5,5,5)，调用\(H4\_2\_1(10^5)\)，生成\(10^5\)个随机数，去除前1000个，运行得到\(E(X_1+2X_2+3X_3 | X_1+2X_2+3X_3 >15)\)如下表：
+\begin{table}[h]
+\centering
+\begin{tabular}{| c | }          \hline          \bf $E(X_1+2X_2+3X_3 | X_1+2X_2+3X_3 >15)$  \\          \hline   17.66761 \\          \hline 17.65996\\          \hline      17.67592\\          \hline
+ 17.68168\\
+\hline
+17.66473\\
+\hline
+\end{tabular}
+\end{table}
+\subsection{\(E(X_1+2X_2+3X_3 |X_1+2X_2+3X_3 <1)\)}
+
+用Metropolis-Hastings 算法生成,Proposal Kernel采用Random Walk：
+
+\[
+\theta'=\theta+Z,Z\sim N(0,\sigma^2)
+\]
+
+概率分布
+\[f(X_1+2X_2+3X_3 |X_1+2X_2+3X_3 <1)=Ce^{-(X_1+X_2+X_3)}\times I_{(X_1+2X2+3X3 <1)}\times I_{X_1>0}\times I_{X_2>0}\times I_{X_2>0}\]
+
+单次循环中接受概率：
+\[\alpha(X^{(i-1),X*}) = exp(\sum(X^{(i-1)})-\sum(X*)) \times I_{(X*_1+2X2+3X3 <1)}\times I_{X_1>0}\times I_{X_2>0}\times I_{X_2>0}\]
+
+具体算法如下：
+\begin{itemize} 
+\item Step 1:选取适当的初值，保证\(X_1+2X_2+3X_3 <1\)
+\item Step 2:生成\(Z \sim N(0,\sigma^2)\)，令\(X^*=X+Z\)
+\item Step 3:计算单次接受概率\(\alpha(X^{(i-1),X^*})\)
+\item Step 4:生成(0,1)上均匀分布的随机变量U，若\(U<\alpha(X^{(i-1),X^*})\)，令\(X^{(i)}=X^*\)，否则保持\(X^{(i)}=X^{(i-1)}\)
+\end{itemize}
+
+\subsection{模拟估计}
+
+见\(H4\_2\_2.R\)
+
+选取初始值为\((0.1,0.1,0.1)\)，为保证接受率选取\(\sigma=0.09\)，调用\(H4\_2\_2(10^4)\)，生成\(10^4\)个随机数，去除前1000个，得到\(E(X_1+2X_2+3X_3 |X_1+2X_2+3X_3 <1)\)如下表
+\begin{table}[h]
+\centering
+\begin{tabular}{| c | }          \hline          \bf $E(X_1+2X_2+3X_3 | X_1+2X_2+3X_3 <1)$  \\          \hline0.7340738 \\          \hline 0.7261952\\          \hline   0.727004\\          \hline
+0.7210271\\
+\hline
+0.7357822\\
+\hline
+\end{tabular}
+\end{table}
+
+
+\section{第三题}
+
+假设X,Y,Z的联合概率密度为\(f(x,y,x)=C e^{-(x+y+z+axy+bxz+cyz)},x>0,y>0,z>0\)，其中\(a,b,c\)为非负常数，C取值与\(a,b,c\)无关，估计X，Y，Z。并估计E(XYZ)，当\(a=b=c=1\)时。
+
+\subsection{模拟方法}
+
+采用Metropolis-Hastings算法估计X，Y，Z：
+
+Proposal Kernel采用Random Walk：
+
+\[
+\theta'=\theta+Z,Z\sim N(0,\sigma^2)
+\]
+
+概率分布
+\[f(x,y,x)=C e^{-(x+y+z+axy+bxz+cyz)},x>0,y>0,z>0\]
+
+单次循环的接受概率:
+\begin{eqnarray*}
+& &\alpha(X^{(i-1)},X*)\\
+&=&exp((X+Y+Z+aXY+bXZ+cYZ)-(X^*+Y^*+Z^*+aX^*Y^*+bX^*Z^*+cY^*Z^*))\\
+& &\times I_{X^*>0}\times I_{Y^*>0}\times I_{Z^*>0}
+\end{eqnarray*}
+
+具体算法如下：
+\begin{itemize} 
+\item Step 1:选取适当的初值，保证\(X_1>0,X_2>0,X_3>0\)
+\item Step 2:生成\(Z \sim N(0,\sigma^2)\)，令\(X^*=X+Z\)
+\item Step 3:计算单次接受概率\(\alpha(X^{(i-1),X^*})\)
+\item Step 4:生成(0,1)上均匀分布的随机变量U，若\(U<\alpha(X^{(i-1),X^*})\)，令\(X^{(i)}=X^*\)，否则保持\(X^{(i)}=X^{(i-1)}\)
+\end{itemize}
+
+\subsection{模拟估计}
+
+见MCMC.Metroxyz.R
+
+调用MCMC.Metroxyz.R(1,1,1),选取初始值为\((1,1,1)\)，为保证接受率选取\(\sigma=0.3\)，生成\(10^4\)个随机数，去除前1000个，得到\(E(X_1X_2X_3)\)如下表所示
+   
+   
+\begin{table}[h]
+\centering
+\begin{tabular}{| c | }          \hline          \bf $E(X_1 X_2 X_3)$ \\          \hline   0.0840624  \\          \hline 0.08302989 \\          \hline       0.09016883\\          \hline
+ 0.09280316\\
+\hline
+0.1034397\\
+\hline
+\end{tabular}
+\end{table}
+
+   
+
+\section{第四题}
+
+\subsection{模拟方法}
+
+假设X,Y,N的联合分布为
+\begin{eqnarray*}
+&& P(X=i,y \leq Y \leq y+dy,N=n) \\
+&\approx& C{n \choose i}y^{i+\alpha-1}(1-y)^{n-i+\beta-1}e^{-\lambda}\frac{\lambda^n}{n!}dy
+\end{eqnarray*}
+其中，i= 0, ... ,n;n = 0,1, ... ;y $≥ $0.当$\alpha$=2，$\beta$=3，$\lambda$=4时，用模拟方法估计$ E(X),E(Y),E(N)$
+
+首先有
+$$F(y+dy)-F(y)=\int_{y}^{y+dy}f(x,t,n)dt=C{n \choose i}y^{i+1}(1-y)^{n-i+2}e^{-\lambda}\frac{\lambda^n}{n!}dy$$
+所以有
+$$\frac{F(y+dy)-F(y)}{dy}=C{n \choose i}y^{i+1}(1-y)^{n-i+2}e^{-\lambda}\frac{\lambda^n}{n!}$$
+
+令$dy\rightarrow0$得到
+
+$$P(X=i,Y=y,N=n)C{n \choose i}y^{i+1}(1-y)^{n-i+2}e^{-\lambda}\frac{\lambda^n}{n!}$$
+
+再求$X,Y,N$分别的条件概率
+
+$$P(X=i|Y=y,N=n)=\frac{ {n \choose i}y^i (1-y)^{-i}}{\sum_{i=0}^{i=n} {n \choose i}y^i (1-y)^{-i}}  $$
+
+$$P(Y=y|X=i,N=n)=\frac{y^{i+1}(1-y)^{n-i+2}}{\Gamma(i+2) \Gamma(n-i+2)/\Gamma(n+5)}$$
+
+$\lambda=4(1-y)$:
+$$P(N=n|X=i,Y=y)=\frac{e^{-4(1-y)} [4(1-y)]^{n-i}}{(n-i)!}
+$$
+可以看出P(X=i|Y=y,N=n)是二项分布，P(Y=y|X=i,N=n)是Beta分布，P(N=n|X=i,Y=y)看作是$(n-i)$的泊松分布,
+
+选择用Gibbs采样进行模拟:
+\begin{itemize} 
+\item Step 1:随机给出初始值,\((x_0,y_0,n_0) \)并且满足条件
+\item Step 2:选出随机数$\in$(1,2,3)，对应进行采样。取样方式为：\(x_i  \sim f(x|y_{i-1},n_{i-1})\),\(y_i \sim f(y|x_i,n_{i-1})\),$n_i \sim f(n|x_i,y_i)$，并且保证$x=0,\dots,n ;0\leq y\leq 1;n=0,\dots,$;
+\end{itemize}
+
+\subsection{模拟估计}
+
+调用函数\(H4\_4(10000,2,3,4)\)五次得到的均值如下：
+
+\begin{table}[h]
+\centering
+\begin{tabular}{| l | c | r | }          \hline          \bf E(X) & \bf E(Y) & \bf E(N) \\          \hline        1.5511 &0.3952789 &3.9191\\          \hline  1.5537 &0.3960138 &3.9497\\          \hline        1.6074 &0.4058824 &3.9492\\          \hline
+1.5895& 0.3958827 &4.0418\\
+\hline
+1.5077& 0.385433 & 3.9543\\
+\hline
+\end{tabular}
+\end{table}
+
+\section{第五题}
+
+生成两个二维正态分布生成的混合正态分布，两个二维正态分布的均值和协方差矩阵为\((1,4),(-2,-1);\),两个分布中随机变量产生的概率分别为0.5,0.5。
+
+\subsection{模拟方法}
+采用Metropolis-Hastings算法得到两个单独的二维正态分布链，然后再进行随机混合，使得两个分布中随机变量产生的概率分别为0.5,0.5。
+
+概率分布
+\[f(x_j,y_j)=\frac{1}{2\pi \sqrt(\Sigma_j)}exp(-\frac{1}{2}(x-\mu_j)^T\Sigma_j^{-1}(x-\mu_j))\]
+
+单次循环的接受概率:
+\[\alpha_j(X^{(i-1)},X*)=exp(\frac{1}{2}(x-\mu_j)^T\Sigma_j^{-1}(x-\mu_j)-\frac{1}{2}(x*-\mu_j)^T\Sigma_j^{-1}(x*-\mu_j))
+\]
+
+具体算法如下：
+\begin{itemize} 
+\item Step 1:选取适当的初值，保证\(X_j>0,Y_j>0\)
+\item Step 2:生成\(Z \sim N(0,\sigma_j^2)\)，令\(X_j^*=X_j+Z\)
+\item Step 3:计算单次接受概率\(\alpha_j(X^{(i-1),X^*})\)
+\item Step 4:生成(0,1)上均匀分布的随机变量U，若\(U<\alpha_j(X^{(i-1),X^*})\)，令\(X_j^{(i)}=X_j^*\)，否则保持\(X_j^{(i)}=X_j^{(i-1)}\)
+\end{itemize}
+
+如此分别得到两个二维正态分布的随机数，在随机生成\((0,1)\)上均匀分布的随机数U,若\(U<1/2\)，令\(X=X_1\)，否则\(X=X_2\)。这样得到两个二维正态分布的混合分布。
+
+\subsection{模拟估计}
+
+见\(H4\_5.R\)
+
+这里选取初值为二维正态分布的均值，共计生成5000个随机数，去掉前1000个，得到数据如图：
+
+\centerline{\includegraphics[width=5.5in]{H4_5.eps}}
+
+\end{document}

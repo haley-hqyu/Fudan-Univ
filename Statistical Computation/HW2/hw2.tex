@@ -1,0 +1,295 @@
+\documentclass{ctexart}
+
+\usepackage{amsmath}
+
+\usepackage{amsthm}
+
+\usepackage{amssymb}
+
+\usepackage{mathabx}
+
+\usepackage{bm}
+
+\usepackage{graphicx}
+
+\usepackage{listings}
+\lstset{
+basicstyle=\scriptsize
+}
+
+\usepackage{caption}
+
+\begin{titlepage}
+
+\title{统计中的计算方法 \\ 第二次作业}
+
+\author{于慧倩 \\ 14300180118}
+
+\date{2017年4月}
+
+\end{titlepage}
+
+\begin{document}
+
+\maketitle
+
+\newpage
+
+\begin{enumerate}
+
+%第一题
+\item
+已知隐马尔科夫链的状态转移概率如图一所示,对输出状态{A,B}的输出概率为e1(A) = 0.5,e1(B) = 0.5,e2 (A) = 0.1,e2 (B) = 0.9,e3 (A) = 0.9, e3 (B) = 0.1。完成 1-5 题：
+
+\begin{enumerate}
+\item 用向前方法计算出现状态 BAB 的概率。
+
+\[P(BAB)=0.1\times f_1(3)+0.2 \times f_2(3)+0.4 \times f_3(3)\]
+用forward方法求解\(f_1(3),f_2(3),f_3(3)\)：
+\begin{eqnarray*}
+& &f_1(1)=0.2\times0.5=0.1\\
+& &f_2(1)=0.3\times0.9=0.27\\
+& &f_3(1)=0.5 \times 0.1=0.05\\
+& &f_1(2)=0.5\times(0.3\times0.1+0)=0.015\\
+& &f_2(2)=0.1\times(0.3\times0.1+0.4\times0.27+0.3\times0.05)=0.0153\\
+& &f_3(2)=0.9\times(0.3\times0.1+0.4\times0.27+0.3\times0.05)=0.1377\\
+& &f_1(3)=0.5\times(0.3\times0.015)=0.00225\\
+& &f_2(3)=0.9\times(0.3\times0.015+0.4\times0.0153+0.3\times0.1377)=0.046737\\
+& &f_3(3)=0.1\times(0.3\times0.015+0.4\times0.0153+0.3\times0.1377)=0.005193
+\end{eqnarray*}
+故
+\[P(BAB)=0.1\times f_1(3)+0.2 \times f_2(3)+0.4 \times f_3(3)=0.0116496\]
+
+
+\item 用向后方法计算出现状态 BAB 的概率。
+\[P(BAB)=0.2\times0.5\times b_1(1)+0.3\times0.9\times b_2(1)+0.5\times0.1\times b_3(1)\]
+
+用backward方法求解\(b_1(1),b_2(1),b_3(1)\)：
+\begin{eqnarray*}
+& &b_1(3)=0.1,b_2(3)=0.2,b_3(3)=0.4\\
+& &b_1(2)=0.3\times0.5\times0.1+0.3\times0.9\times0.2+0.3\times0.1\times0.4=0.081\\
+& &b_2(2)=0.4\times0.9\times0.2+0.4\times0.1\times0.4=0.088\\
+& &b_3(2)=0.3\times0.9\times0.2+0.3\times0.1\times0.4=0.066\\
+& &b_1(1)=0.3\times0.5\times 0.081+0.3\times0.1\times0.088+0.3\times0.9\times0.066=0.03261\\
+& &b_2(1)=0.4\times0.1\times0.088+0.4\times0.9\times0.066=0.02728\\
+& &b_3(1)=0.3\times0.1\times0.088+0.3\times0.9\times0.066=0.02046
+\end{eqnarray*}
+故
+\[P(BAB)=0.2\times0.5\times b_1(1)+0.3\times0.9\times b_2(1)+0.5\times0.1\times b_3(1)=0.0116496\]
+
+
+
+
+\item 对 BAB 计算对每个显示状态，隐状态\(\mbox{G}_2\) 的概率。
+\begin{eqnarray*}
+ P(s_1=G_2|x_1=B)&=&\frac{P(s_1=G_2,x_1=B)}{P(x_1=B)}\\
+ &=&\frac{P(x_1=B|s_1=G_2)P(s_1=G_2)}{\sum_{l=1,2,3}P(x_1=B|s_1=G_l)P(s_1=G_l)} \\
+ &=& \frac{0.9\times0.3}{0.5\times0.2+0.9\times0.3+0.1\times0.5}\\
+ &=&0.6428571
+ \end{eqnarray*}
+ \begin{eqnarray*}
+ P(s_2=G_2|x_2=A)&=&\frac{P(s_2=G_2,x_2=A)}{P(x_2=A)}\\
+ &=& \frac{P(x_2=A|s_2=G_2)P(s_2=G_2)}{\sum_{l=1,2,3}P(x_2=A|s_2=G_l)P(s_2=G_l)} \\
+ &=&0.09166667
+ \end{eqnarray*}
+ \begin{eqnarray*}
+ P(s_3=G_2|x_3=B)&=&\frac{P(s_3=G_2,x_3=B)}{P(x_3=B)}\\
+ &=& \frac{P(x_3=B|s_3=G_2)P(s_3=G_2)}{\sum_{l=1,2,3}P(x_3=B|s_3=G_l)P(s_3=G_l)} \\
+ &=&0.8686047
+ \end{eqnarray*}
+ 
+\item 对 BAB 计算隐状态为\(\mbox{G}_1\mbox{G}_2\mbox{G}_1\)的概率。
+
+由于从\(G_2\)转移到\(G_1\)的概率为0，所以隐状态为\(\mbox{G}_1\mbox{G}_2\mbox{G}_1\)的概率为0.
+
+\item 对 BAB 计算最优的隐状态路径。
+
+\begin{eqnarray*}
+& &v_1(1)=0.5\times0.2=0.1,v_2(1)=0.9\times0.3=0.27,v_3(1)=0.1\times0.5=0.05\\
+& &v_1(2)=0.5\times \mbox{max}\{0.1\times0.3,0,0\}=0.015\\
+& &v_2(2)=0.1\times \mbox{max}\{0.3\times0.1, 0.4\times0.27,0.3\times0.05\}=0.108\\
+& &v_3(2)=0.9\times \mbox{max} \{0.3\times0.1,0.4\times0.27,0.3\times0.05 \}=0.972\\
+& &v_1(3)=0.5\times \mbox{max} \{0.3\times0.015,0,0 \}=0.00225\\
+& &v_2(3)=0.9\times \mbox{max}\{ 0.3\times0.015,0.4\times0.108, 0.3\times0.972\}=0.26244\\
+& &v_3(3)=0.1\times \mbox{max} \{0.2\times0.015,0.4\times0.108,0.3\times0.972 \}=0.02916
+\end{eqnarray*}
+由此得到，最优隐状态路径为\(\mbox{G}_2,\mbox{G}_3,\mbox{G}_2\)，这条隐状态概率为0.26244
+\end{enumerate}
+
+\item 假设 HMM 隐状态为 A,B,显示状态为 L,R,对附件数据assign2.csv,估计HMM 的参数,并估计出现此隐状态的概率。数据中包含 2 条链的隐状态和显示状态。
+
+解：
+\begin{enumerate}
+
+\item 推导过程
+
+使用最大似然估计对隐状态已知的马尔可夫链进行参数估计：
+
+设转移矩阵为A，发射矩阵为E，其中\(a_{ij}\)代表从j转移到i状态的概率，\(e_{ij}\)代表从j发射出i状态的概率。设\(AA与\tilde{AA}\)分别为第一条链、第二条链的转移频数矩阵，\(EE与\tilde{EE}\)分别为第一条链、第二条链的发射频数矩阵，（其中\(AA_{i,j}\)代表第一条链中隐状态由j变为i的频数，\(EE_{i,j}\)代表第一条链中隐状态j发射出显状态i的频数）。 
+
+由于数据中包含两条链的隐状态和显状态，有利用最大似然估计：
+\begin{eqnarray*}
+Q(\theta|\theta^{(t)})&=&arg \mbox{max}L(\theta | \bm{X}_1,\bm{S}_1,\bm{X}_2,\bm{S}_2) \\
+&=& arg \mbox{max} \log P(\theta | \bm{X}_1,\bm{S}_1,\bm{X}_2,\bm{S}_2) \\
+&=&arg \mbox{max} \{ \log P(\theta | \bm{X}_1,\bm{S}_1)+\log P(\theta | \bm{X}_2,\bm{S}_2)\} \\
+&=& arg \mbox{max} \log \prod_{k=1,2;l=1,2}(a_{k,l})^{AA_{k,l}}(a_{k,l})^{\tilde{AA}_{k,l}}(e_{k,l})^{EE_{k,l}}(e_{k,l})^{\tilde{EE}_{k,l} }\\
+&=& arg \mbox{max} \{ \sum_{k=1,2;l=1,2} (AA_{k,l}+\tilde{AA}_{k,l}) \log a_{k,l} \\
+&           &+\sum_{k=1,2;l=1,2}(EE_{k,l}+\tilde{EE}_{k,l}) \log e_{k,l} \}
+\end{eqnarray*}
+
+令其对参数求导等于零，得到：
+\[a_{k,l} = \frac{AA_{k,l}+\tilde{AA}_{k,l}}{AA_{k,l}+AA_{k',l}+\tilde{AA}_{k,l}+\tilde{AA}_{k',l}}\]
+\[e_{k,l} = \frac{EE_{k,l}+\tilde{EE}_{k,l}}{AA_{k,l}+AA_{k',l}+\tilde{AA}_{k,l}+\tilde{AA}_{k',l}}\]
+\[(k=1,2;l=1,2)\]
+
+\item 编写程序\(\mbox{H}2\_2.\mbox{R}\)计算，最终得到转移矩阵与发射矩阵：
+\begin{enumerate}
+\item 转移矩阵
+
+\begin{equation*}
+\left(
+\begin{array}{ccc}
+    0.854546 &  0.193182  \\
+   0.145455& 0.806818 \\
+   \end{array}
+   \right)
+  \end{equation*}
+
+
+
+\item 发射矩阵
+
+\begin{equation*}
+\left(
+\begin{array}{ccc}
+    0.6636364 & 0.2727273  \\
+   0.3363636 & 0.7272727 \\
+   \end{array}
+   \right)
+  \end{equation*}
+
+\end{enumerate}
+
+\item 求该隐状态出现的概率,即\(P(s_i=l | \bm{X})\)出现的概率：
+
+\begin{eqnarray*}
+P(s_i=l | \bm{X})&=& \frac{P(\bm{X},s_i=l)}{P(\bm{X})}\\
+&=& \frac{P(\bm{X},s_i=l)}{\sum_k P(\bm{X},s_i = l_k)}\\
+&=& \frac{f_{s_i}(l)b_{s_i}(l)}{\sum_k f_{s_i}(l_k)b_{s_i}(l_k)}
+\end{eqnarray*}
+
+由程序\(\mbox{H}2\_2.\mbox{R}\)得到该隐状态出现的概率如\(P\_x\_s\).
+
+\end{enumerate}
+
+\item 同(二),对附件数据 assign3.csv,估计 HMM 的参数,并估计最优隐状态路径。数据中包含 2 条链的隐状态。
+
+\begin{enumerate}
+\item
+估计参数
+
+\begin{enumerate}
+\item 用向前方法计算:
+\[f_l(i)=e_l(x_i)\sum_k f_k(i-1)\cdot a_{kl} ;(i=2 :L)\]
+\item 用向后方法计算:
+\[B(s_i)=\sum_{s_{i+1}}P(s_{i+1}|s_i)P(x_{i+1}|s_{i+1})B(s_{i+1});(i=1:L-2) \]
+\[B(s_{L-1})=P(x_L|s_{L-1})=\sum_{s_L} P(s_L|s_{L-1})P(x_L|x_L)\]
+\item 有两条观察到的显链，所以利用EM算法得到参数估计值：
+\begin{enumerate}
+\item E-step:
+\begin{eqnarray*}
+& &Q(\theta|\theta^t)\\
+&=&\sum_j \sum_{s^j\in S^j}P(s^j|X^j,t\theta^t)\log P(x^j,X^j|\theta)\\
+&=& \sum_j \sum_{s^j \in S^j} P(s^j|X^j,t\theta^t) \log(\pi_{s_1}^j \prod_{t=1}^T a_{s_{t-1} s_t} e_{s_t}(x_t))
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{eqnarray*}
+
+\item M-step:
+
+初始发射概率：
+\[\pi_{1,i} = \frac{1}{2}\sum_{j=1}^2P(S_1^j=i|X^j,\theta^t)\]
+转移数量矩阵：
+\begin{eqnarray*}
+A_{kl}&=&\sum_{j=1}^2\frac{1}{P(X^j)}\sum_{i=1}^LP(X^j,s_{i-1}=k,s_i=l)\\
+&=&\sum_{j=1}^2\frac{1}{P(X^j)}\sum_{i=1}^L f_k^j(i-1)a_{kl}^je_l^j(x_i)b_l^j(i)
+\end{eqnarray*}
+
+发射数量矩阵：
+\[E_k(b)=\sum_{j=1}^2\frac{1}{P(X^j)}\sum_{i,x_i=b}f_k^j(i)b_k^j(i)\]
+
+从而得到转移矩阵与发射矩阵的迭代公式：
+ \[a_{kl}=\frac{A_{kl}}{\sum_{l'}A_{kl'}},e_k(b)=\frac{E_k(b)}{\sum_{b'}E_k(b')}\]
+ \end{enumerate}
+ \end{enumerate}
+ 
+ \item 迭代结果
+ 
+如程序\(\mbox{H}2\_3.\mbox{R}\)最终得到转移矩阵与发射矩阵如下：
+ 
+ 
+ 
+\begin{enumerate}
+\item 转移矩阵
+ 
+ \begin{equation*}
+\left(
+\begin{array}{ccc}
+    0.8875018 &  0.04368625  \\
+   0.1124982& 0.9563138 \\
+   \end{array}
+   \right)
+  \end{equation*}
+
+
+\item 发射矩阵
+
+ \begin{equation*}
+\left(
+\begin{array}{ccc}
+    0.8375897 & 0.3603209  \\
+   0.1624103 & 0.6396791 \\
+   \end{array}
+   \right)
+  \end{equation*}
+
+
+\end{enumerate}
+ 
+ 
+ 
+ 
+ \item 估计最优隐状态路径
+ 
+估计出两条链的最优隐状态如下：
+ \begin{enumerate}
+\item \(L_1\)= B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B A A A A A A A A A A A A A A A A A A A B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B.
+
+\item \(L_2\)=B B B B B B B B B B B B B B B B B B B B B B B B B B B B B A A A A A A A A A A A A A A A A A A A A A A A A A A B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B B.
+\end{enumerate}
+ 
+ 
+ 
+
+\end{enumerate}
+
+
+
+
+\end{enumerate}
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
