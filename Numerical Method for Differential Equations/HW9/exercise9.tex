@@ -1,0 +1,164 @@
+\documentclass{ctexart}
+
+\usepackage{amsmath}
+
+\usepackage{amsthm}
+
+\usepackage{amssymb}
+
+\usepackage{bm}
+
+\usepackage{graphicx}
+
+\usepackage{listings}
+\lstset{
+basicstyle=\scriptsize
+}
+
+\usepackage{caption}
+
+\begin{titlepage}
+
+\title{微分方程数值解 \\ 第九周作业}
+
+\author{于慧倩 \\ 14300180118}
+
+\date{2017年4月}
+
+\end{titlepage}
+
+\begin{document}
+
+\maketitle
+
+\newpage
+
+\begin{enumerate}
+%第一题
+\item P151.2
+
+\begin{enumerate}
+\item 证明（3.1.54） 如果有\(e_N=e_0=0\),则\( \| \bm{e}\|_{\ell_2} \leq \|\delta_x^+ \bm{e}\|_{\ell_2} \)
+
+\begin{proof}
+
+\begin{eqnarray*}
+e_i &=& e_i-e_{i-1}+e_{i-1} - e_{i-1} +\dots +e_1-e_0\\
+&=&\sum_{j=0}^{i-1} (e_{j+1}-e_j)\\
+&=&\sum_{j=0}^{i-1} h \delta_x^+ e_j
+\end{eqnarray*}
+
+\[\mbox{令} u'(x) = \left \{ \begin{array}{rl}
+ \delta_x^+ e_{[ \frac{x}{h}]} &\mbox{ if $\frac{x}{h} \in N^*$} \\
+  0 &\mbox{ otherwise}
+       \end{array} \right.
+\]
+\begin{eqnarray*}
+\|\bm{e}\|_{\ell_2}^2 &=& \sum_{i=1}^{N-1} e_i^2\\
+&=&\sum_{i=1}^{N-1} (\sum_{j=0}^{i-1} h \delta_x^+ e_j)^2\\
+&=& \sum_{i=1}^{N-1}( \int_0^{(i-1)h} u' (s) \mbox{d} s)^2\\
+&=& \frac{1}{h^2} \int_0^1( \int_0^x u' (s) \mbox{d} s)^2 \mbox{d}x\\
+&\leq& \frac{1}{h^2} \int_0^1(x \int_0^x u'(s)^2\mbox{d}s)\mbox{d}x\\
+&\leq&\frac{1}{2h^2} \int_0^1u'(x)\mbox{d}x
+\end{eqnarray*}
+
+\begin{eqnarray*}
+\| \delta_x^+ \bm{e}\|_{\ell_2}^2 &=& \sum_{i=1}^{N-1} (\delta_x^+ e_i)^2\\
+&=& \frac{1}{h^2}\int_0^1u' (x)^2 \mbox{d} x
+\end{eqnarray*}
+
+故有\(\bm{e}\|_{\ell_2}^2 \leq \delta_x^+ \bm{e}\|_{\ell_2}^2 \)
+
+\end{proof}
+
+\item  证明收敛性和两阶收敛
+有截断误差
+\[
+R_i=-\delta_x^2 u(x_i)-f(x_i)\]
+
+定义函数\(e_i=u(x_i)-u_i\)，则有
+
+\[R_i=-\delta_x^2 e_i\]
+
+两边同时乘\(e_i\)，得到
+\[
+-e_i \delta_x^2 e_i=R_ie_i\]
+
+则有
+
+\[
+\| \delta_x^+ e\|^2_{l^2}=\sum_{i=1}^{N-1} R_ie_i \leq \|R\|_{l^2}\|e\|_{l^2}
+\]
+
+由于上已经证明\(\|e\|_{l^2} \leq \| \delta_x^+ e \|_{l^2}\)
+
+所以得到
+
+\[
+\|e\|_{l^2} \leq \|R\|_{l^2}
+\]
+
+同时有截断误差
+\[
+R_i = -\frac{h^2}{12}u^{(4)}(\theta_i) 
+\]
+
+所以有\(\|e\|_{l^2}\)收敛，得证三点差分格式的收敛性。
+
+得\(e_i\)二阶收敛。
+
+导数值\(\delta_x^+ u_i=\delta_x^+[u(x_i)-e_i]\)，其收敛性即\(\delta_x^+ e_i\)的收敛性。
+
+有
+\[
+ \| \delta_x^+ e \| ^2_{l^2} \leq \|R\|_{l^2} \| e \|_{l^2} \leq \|R\|_{l^2} 
+\]
+所以有导数也二阶收敛。
+
+\end{enumerate}
+
+\item P151.3
+
+\begin{enumerate}
+\item 证明三点差分格式的极值原理仍然成立
+
+有相应的三点差分格式：
+\[
+-\frac{a(x_n)u_{n+1}-(a(x_n)+a(x_{n-1}))u_n+a(x_{n-1})u_{n-1}}{h^2}=f_n
+\]
+
+展开即
+\[
+a(x_n)u_{n+1}=(a(x_n)+a(x_{n-1}))u_n-a(x_{n-1})u_{n-1}-h^2f_n
+\]
+
+不妨假设极值原理不成立，\(u_n\)为三点差分格式求出的最小值
+\[
+u_{n+1} \geq u_n , u_n \geq u_{n-1}
+\]
+
+同时有
+\begin{eqnarray}
+a(x_n)(u_{n+1}-u_n)=a(x_{n-1})(u_n-u_{n-1})-h^2f_n
+\end{eqnarray}
+由于
+\[
+f_n \geq 0,a(x)\geq \alpha >0
+\]
+所以有，\((1)\)的左边\(\geq 0\)，右边\(\leq 0\)，所以若\(u_n\)达到最小值，应有\(u\)恒为常数。所以有极值原理成立。
+
+
+\item 给出三点差分格式的最大模误差估计
+
+三点差分格式离散得到的截断误差为：
+\[
+R_n = - \delta_x^-[a(x_n)\delta_x^+u(x_n)]-f(x_n)\]
+
+定义函数\(e_i=u(x_i)-u_i\)，则有\(-\delta_x^-[a(x_n)\delta_x^+e_n)]=R_n=-\frac{h^2}{12}u^{(4)}(x_n)+O(h^4)\)
+ 
+ 而\(a(x) \geq \alpha \geq 0\)所以\( \| - \delta^2_x e_n\|_{l^\infty} \leq \|R_n\|_{l^\infty}/ \alpha\),构造\(v_0=v_N=0\)且\(-\delta^2_x v_n=\|R\|_{l^\infty}/\alpha\)
+,则有\(v_n=\frac{n}{2N}(1-\frac{n}{N})\|R\|_{l^\infty}/\alpha\).最终得到\(u(x)\)的四阶导数一致有界为\(M_4\),则有\(\|e\|_{l^\infty}=\frac{M_4h^2}{96\alpha}\)
+
+\end{enumerate}
+\end{enumerate}
+\end{document}

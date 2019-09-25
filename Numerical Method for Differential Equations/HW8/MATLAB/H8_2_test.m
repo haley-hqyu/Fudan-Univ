@@ -1,0 +1,10 @@
+N = 1000; 
+h = 1/N;
+a=1;
+c=1;
+uN=1;
+A = (diag(2*ones(1,N-1))-diag(ones(1,N-2),1)-diag(ones(1,N-2),-1))/h^2;
+C = diag((ones(1,N-1)));
+f = ones(N-1,1)*0;
+f(N-1,1)=uN/h^2;
+u=(A+C)^(-1)*f
