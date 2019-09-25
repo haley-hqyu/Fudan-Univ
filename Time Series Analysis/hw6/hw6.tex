@@ -1,0 +1,89 @@
+\documentclass{article}
+\usepackage{CJK}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{palatino}
+\usepackage{xcolor}
+\usepackage{geometry}
+\usepackage{listings}
+\usepackage{pxfonts}
+\usepackage{enumerate}
+\usepackage[pdftex]{graphicx}
+\geometry{left=2cm,right=2cm,top=3cm,bottom=3cm}
+\pagestyle{myheadings}
+\markright{Huiqian Yu/14300180118}
+\setlength{\parindent}{0pt}
+\newcommand{\ix}[1]{\intertext{{}#1}}
+\newcommand{\dx}{\;\mathrm{d}\,x}
+\newcommand{\dt}{\;\mathrm{d}\,t}
+\newcommand{\dm}[1]{\;\mathrm{d}\,{}#1}
+\newcommand{\ve}{\varepsilon}
+\newcommand{\tp}{^\mathsf{T}}
+\newcommand{\var}{\mathrm{var}}
+\newcommand{\corr}{\mathrm{corr}}
+\newcommand{\mbe}[1]{\mathbb{E}\left[{}#1\right]}
+\newcommand{\argmin}[1]{\mathop{\arg\min}_{{}#1}}
+\begin{document}
+
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+\begin{CJK*}{GBK}{song}
+\begin{enumerate}
+\item[3.10]
+\begin{lstlisting}[language=R,keywordstyle=\color{blue!70},commentstyle=\color{red!50!green!50!blue!50},frame=single,rulesepcolor=\color{red!20!green!20!blue!20},backgroundcolor=\color{backcolour},
+]
+#Problem 3.10(a)
+fitCmort = ar.ols(cmort, order.max = 2, demean = F, intercept = T)
+#Problem 3.10(b)
+predictCmort = predict(fitCmort, n.ahead = 4)
+intervals = matrix(c(predictCmort$pred + predictCmort$se * qnorm(0.025),
+predictCmort$pred + predictCmort$se * qnorm(0.975)),4,2)
+print(intervals)2212212121212
+\end{lstlisting}
+The fitted coefficients are $\phi_1= 0.4286, \phi_2=0.4418, \sigma_w^2=11.45$. The intervals are (76.45777,98.74196), (74.64117,98.88581), (73.35431,101.31997) and (72.33079,102.09621).
+\item[3.15]
+\begin{align*}
+	\ix{By induction, the m-step forecast is}
+    x_{t+m}^t&=\phi^mx_t\\
+    \ix{Thus,}
+    \mbe{(x_{t+m}-x_{t+m}^t)^2}&=\mbe{\left(\phi^mx_t+\sum\limits_{i=0}^{m-1}\phi^iw_{t+m-i}-\phi^mx_t\right)^2}\\
+    &={\var}\left(\sum\limits_{i=0}^{m-1}\phi^iw_{t+m-i}\right)\\
+    &=\dfrac{1-\phi^{2t}}{1-\phi^2}\sigma_w^2
+\end{align*}
+\item[3.16]
+\begin{align*}
+	\ix{According to Example~3.7, the model is an ARMA(1,1) model, it can be written as}
+    x_t&=w_t+1.4\sum\limits_{j=1}^\infty.9^{j-1}w_{t-j}\\
+    x_t&=1.4\sum\limits_{j=1}^\infty(-.5)^{j-1}x_{t-j}+w_t\\
+    \ix{thus, by equation~(3.92),}
+    \tilde x_{n+m}^n&=0.9\tilde x_{n+m-1}^n+0.5\tilde w_{n+m-1}^n\\
+    &=0.9\tilde x_{n+m-1}^n=0.9^{m-1}\tilde x_{n+1}^n\\
+    &=0.9^{m}x_n+0.9^{m-1}0.5\tilde w_n^n\\
+    \tilde w_n^n&=x_t-0.9x_{t-1}-0.5\tilde w_{n-1}^n\\
+    &=1.4\sum\limits_{j=0}^{t-1}(-0.5)^{j}x_{t-j}-0.4x_t\\
+    -\sum\limits_{j=1}^{m-1}\pi_j\tilde x_{n+m-j}^n&=1.4\sum\limits_{j=1}^{m-1}(-0.5)^{j-1}\tilde x_{n+m-j}^n\\
+    &=1.4\sum\limits_{j=1}^{m-1}(-0.5)^{j-1}(0.9^{m-j}x_n+0.9^{m-j-1}0.5\tilde w_n^n)\\
+    \tilde x_{n+m}^n+\sum\limits_{j=1}^{m-1}\pi_j\tilde x_{n+m-j}^n&=\tilde w_n^n+0.4x_t\\
+    &=-\sum\limits_{j=m}^{n+m-1}\pi_jx_{n+m-j}
+\end{align*}
+This is equal to equation~(3.91).
+\item[3.40]
+\begin{align*}
+	\ix{Since in AR(p) model,}
+    x_{n+1}&=\sum\limits_{j=1}^p\phi_jx_{t-j}+w_t\\
+    \ix{For any $g(x)$ in $\overline{\mathrm{sp}}\{x_k\}$,}
+    \mbe{(x_{n+1}-g(x))^2}&=\mbe{\left(x_{n+1}-%
+\sum\limits_{j=1}^p\phi_jx_{t-j}+\sum\limits_{j=1}^p\phi_jx_{t-j}-g(x)\right)^2}\\
+    &=\mbe{\left(x_{n+1}-\sum\limits_{j=1}^p\phi_jx_{t-j}\right)^2}+2\mbe{\left(x_{n+1}-\sum\limits_{j=1}^p\phi_jx_{t-j}\right)\left(\sum\limits_{j=1}^p\phi_jx_{t-j}-g(x)\right)}
+    \\&+\mbe{\left(\sum\limits_{j=1}^p\phi_jx_{t-j}-g(x)\right)^2}
+    \ix{since $g(x)$ and $\sum\limits_{j=1}^p\phi_jx_{t-j}$ are in $\overline{\mathrm{sp}}\{x_k\}$,}
+    \mbe{\left(x_{n+1}-\sum\limits_{j=1}^p\phi_jx_{t-j}\right)\left(\sum\limits_{j=1}^p\phi_jx_{t-j}-g(x)\right)}&=
+    \mbe{w_t\left(\sum\limits_{j=1}^p\phi_jx_{t-j}-g(x)\right)}=0\\
+    \mbe{\left(\sum\limits_{j=1}^p\phi_jx_{t-j}-g(x)\right)^2}&\ge 0\\
+    \ix{thus,}
+    \mbe{(x_{n+1}-g(x))^2}&\ge\mbe{\left(x_{n+1}-\sum\limits_{j=1}^p\phi_jx_{t-j}\right)^2}
+\end{align*}
+Thus, $\sum\limits_{j=1}^p\phi_jx_{t-j}$ is the BLP.
+\end{enumerate}
+\end{CJK*}
+\end{document}
